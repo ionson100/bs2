@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name"></string>
+    <string name="title_activity_main_core">UsmanBox</string>
+    <string name="search_hint">Настройки</string>
+    <string name="settings">Настройки</string>
+    <string name="camera">Камера</string>
+</resources>
