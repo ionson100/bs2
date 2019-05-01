@@ -1,4 +1,4 @@
-# bs2
+# bs2  as https://github.com/dm77/barcodescanner
 scaner barcode
-Сканер barcode 
+Сканер barcode просто тест
 
