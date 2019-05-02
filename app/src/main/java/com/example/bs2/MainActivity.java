@@ -6,6 +6,8 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -20,7 +22,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
-    private ZXingScannerView mScannerView;
+    private  ZXingScannerView mScannerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,24 +40,8 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             Settings settings=Settings.getSettings(MainActivity.this);
             mScannerView.setAutoFocus(settings.isFocus);
             mScannerView.setAspectTolerance ( (float)settings.acpect/10f );
-            List<BarcodeFormat> list=new ArrayList<BarcodeFormat>(){{
-                add(BarcodeFormat.UPC_A);
-                add(BarcodeFormat.UPC_E);
-                add(BarcodeFormat.EAN_13);
-                add(BarcodeFormat.EAN_8);
-                add(BarcodeFormat.RSS_14);
-                add(BarcodeFormat.CODE_39);
-                add(BarcodeFormat.CODE_93);
-                add(BarcodeFormat.CODE_128);
-                add(BarcodeFormat.ITF);
-                add(BarcodeFormat.CODABAR);
-                add(BarcodeFormat.QR_CODE);
-                add(BarcodeFormat.DATA_MATRIX);
-                add(BarcodeFormat.PDF_417);
-            }};
-
-            mScannerView.setFormats(list);
             mScannerView.setFlash(settings.isFlash);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
-        //mScannerView.stopCamera();
+        mScannerView.stopCamera();
         Intent intent=new Intent();
         intent.putExtra("type",rawResult.getBarcodeFormat().toString());
         intent.putExtra("data",rawResult.getText());
@@ -91,6 +77,30 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //mScannerView.stopCamera();
+        mScannerView.stopCamera();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.user_info_menu_flash, menu);
+        return true;
+    }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean c=mScannerView.getFlash();
+        try{
+            Settings  settings=Settings.getSettings(MainActivity.this);
+            settings.isFlash=!c;
+            Settings.save(settings,MainActivity.this);
+        }catch (Exception ignored){
+
+        }
+
+        mScannerView.stopCamera();
+
+        mScannerView.setFlash(!c);
+        mScannerView.startCamera();
+        return true;
     }
 }
